@@ -1,0 +1,10 @@
+alembic==1.9.1
+Flask==2.2.2
+Flask_JWT_Extended==4.4.4
+Flask_Mail==0.9.1
+flask_marshmallow==0.14.0
+Flask_Migrate==4.0.0
+flask_sqlalchemy==3.0.2
+marshmallow==3.19.0
+SQLAlchemy==1.4.46
+Werkzeug==2.2.2
