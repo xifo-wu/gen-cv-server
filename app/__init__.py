@@ -15,7 +15,6 @@ def create_app(config_name=None):
 
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(config[config_name])
-
     register_extensions(app)
     register_blueprints(app)
     return app
@@ -34,4 +33,5 @@ def register_blueprints(app: Flask):
     app.register_blueprint(api, url_prefix='/api')
 
     # 注册 API 请求错误
+    app.register_error_handler(404, response.page_not_found)
     app.register_error_handler(APIRequestError, response.api_request_error)

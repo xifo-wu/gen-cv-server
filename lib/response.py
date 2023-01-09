@@ -1,4 +1,11 @@
-from flask import jsonify
+from flask import request, jsonify
+
+
+def page_not_found(e):
+    if request.path.startswith('/api/'):
+        return error(message="请求接口不存在", status_code=404)
+    else:
+        return e, 404
 
 
 def api_request_error(e):
