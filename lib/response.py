@@ -7,6 +7,11 @@ def page_not_found(e):
     else:
         return e, 404
 
+def method_not_allowed(e):
+    if request.path.startswith('/api/'):
+        return error(message="服务器知道请求方法，但目标资源不支持该方法", status_code=405)
+    else:
+        return e, 405
 
 def api_request_error(e):
     return jsonify(e.to_dict()), e.status_code
