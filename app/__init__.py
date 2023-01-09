@@ -3,7 +3,7 @@ import os
 from flask import Flask
 from app.settings import config
 from app.extensions import ma, mail, db, migrate, jwt, redis_client
-from app.api.v1 import api_v1
+from app.api import api
 from app.models import *
 from lib import response
 from lib.api_exception import APIRequestError
@@ -31,8 +31,7 @@ def register_extensions(app: Flask):
 
 
 def register_blueprints(app: Flask):
-    app.register_blueprint(api_v1, url_prefix='/api/v1')
-    # app.register_blueprint(api_v1, url_prefix='/v1', subdomain='api')  # enable subdomain support
+    app.register_blueprint(api, url_prefix='/api')
 
     # 注册 API 请求错误
     app.register_error_handler(APIRequestError, response.api_request_error)

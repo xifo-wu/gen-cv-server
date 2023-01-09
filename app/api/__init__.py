@@ -1,7 +1,19 @@
-from app.models import User
-from app.extensions import jwt, db
-from app.schemas.user import UserSchema
+from flask import Blueprint
 from lib import response
+from app.models import User
+from app.schemas.user import UserSchema
+from app.extensions import jwt, db
+from app.api.v1 import api_v1
+
+api = Blueprint('api', __name__)
+api.register_blueprint(api_v1, url_prefix='/v1')
+# 开启支持 subdomain
+# api.register_blueprint(api_v1, url_prefix='/v1', subdomain='api')
+
+
+@api.errorhandler(500)
+def internal_server_error(e):
+    return response.error(message="服务器出错", status_code=500)
 
 
 @jwt.expired_token_loader
