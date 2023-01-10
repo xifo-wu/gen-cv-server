@@ -22,6 +22,8 @@ class BaseConfig:
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
 
 class DevelopmentConfig(BaseConfig):
+    # Flask Sqlalchemy
+    SQLALCHEMY_ECHO=True
     pass
 
 
