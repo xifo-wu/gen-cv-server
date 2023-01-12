@@ -9,6 +9,7 @@ class User(db.Model, BaseModelMixin):
     nickname = db.Column(db.String(20))
     username = db.Column(db.String(20), unique=True, nullable=False)
     password_hash = db.Column(db.String(128))
+    mobile = db.Column(db.String(20))
 
     @hybrid_property
     def password(self):
