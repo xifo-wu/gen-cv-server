@@ -1,6 +1,8 @@
 from flask import abort
 from app.api.v1 import api_v1
 from app.models.resume import Resume
+from app.models.resume_basic import ResumeBasic
+from app.models.resume_basic_field import ResumeBasicField
 from app.extensions import db
 from app.schemas.resume import CreateAndResumeSchema, ResumeSchema
 from lib import response
@@ -13,31 +15,35 @@ resume_schema = ResumeSchema()
 @api_v1.get('/resumes')
 @jwt_required()
 def index():
+    # 只能获取到自己的简历
     current_user = get_current_user()
     resumes_select = db.select(Resume).where(
         Resume.user_id == current_user['id']).order_by(Resume.updated_at)
 
-    # TODO 添加 page per_page query
     resumes_pagination = db.paginate(
-        select=resumes_select, per_page=10)
-    print(resumes_pagination.items, "aaaaaaaa")
+        select=resumes_select, per_page=10
+    )
 
     resumes_schema = ResumeSchema(many=True)
     result = resumes_schema.dump(resumes_pagination.items)
     return response.format(
-      data=result,
-      meta={
-        "per_page": resumes_pagination.per_page,
-        "total": resumes_pagination.total,
-        "page": resumes_pagination.page,
-        "has_prev": resumes_pagination.has_prev,
-        "has_next": resumes_pagination.has_next,
-    })
+        data=result,
+        meta={
+            "per_page": resumes_pagination.per_page,
+            "total": resumes_pagination.total,
+            "page": resumes_pagination.page,
+            "has_prev": resumes_pagination.has_prev,
+            "has_next": resumes_pagination.has_next,
+        }
+    )
 
 
 @api_v1.post('/resumes')
 @jwt_required()
 def create():
+    """
+    创建简历时会自动创建基本信息
+    """
     current_user = get_current_user()
     schema = load_schema(CreateAndResumeSchema())
 
@@ -48,6 +54,25 @@ def create():
         module_order=schema['module_order'],
         theme_color=schema['theme_color'],
         user_id=current_user['id'],
+    )
+
+    # 新建一份简历基本信息
+    resume.resume_basic = ResumeBasic(
+        email=ResumeBasicField(
+            value=current_user['email'], label="邮箱", visible=True
+        ),
+        name=ResumeBasicField(
+            value=current_user['nickname'], label="姓名"
+        ),
+        mobile=ResumeBasicField(
+            value=current_user.get('mobile'), label="电话"
+        ),
+        job=ResumeBasicField(
+            value="产品经理", label="岗位"
+        ),
+        job_year=ResumeBasicField(
+            value="3 年", label="工作经验"
+        ),
     )
 
     db.session.add(resume)
@@ -102,5 +127,7 @@ def show(resume_slug):
     if current_user['id'] != resume.user.id:
         abort(404)
 
+    print(resume, "resume")
+    print(resume.resume_basic, "resume.resume_basic")
     result = resume_schema.dump(resume)
     return response.format(data=result)

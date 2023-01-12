@@ -11,3 +11,5 @@ class Resume(db.Model, BaseModelMixin):
     custom_styles = db.Column(db.JSON)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     user = db.relationship("User", backref="user")
+
+    resume_basic = db.relationship("ResumeBasic", back_populates="resume", uselist=False, lazy="joined")
