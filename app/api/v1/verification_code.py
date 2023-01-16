@@ -5,7 +5,7 @@ from app.api.v1 import api_v1
 from app.schemas.verification_code import SendVerificationCodeSchema
 from app.extensions import redis_client, mail
 from lib.request import load_schema
-from lib.response import format
+from lib import response
 from lib.generate_verification_code import generate_verification_code
 
 
@@ -18,7 +18,7 @@ def verification_code():
     code = generate_verification_code(6)
 
     if redis_client.exists(result['key']) == 1:
-        return format(message="验证码还在有效时间内")
+        return response.error(message="验证码还在有效时间内")
 
     # 产品环境时在发送到具体的用户上。
     if os.getenv('FLASK_CONFIG') == 'production':
@@ -35,4 +35,4 @@ def verification_code():
 
     redis_client.setex(result['key'], 15 * 60, code)
 
-    return format(message="验证码发送成功")
+    return response.format(message="验证码发送成功")
