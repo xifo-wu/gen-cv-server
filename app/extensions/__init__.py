@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_mail import Mail
+from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 from flask_jwt_extended import JWTManager
 from app.extensions.redis import RedisClient
@@ -12,3 +13,11 @@ jwt = JWTManager()
 redis_client = RedisClient()
 ma = Marshmallow()
 mail = Mail()
+cors = CORS(
+    resources={
+        r"/api/*":
+        {
+          "origins": ["http://localhost:3000"]
+        }
+    }
+)

@@ -2,7 +2,7 @@ import os
 
 from flask import Flask
 from app.settings import config
-from app.extensions import ma, mail, db, migrate, jwt, redis_client
+from app.extensions import ma, mail, cors, db, migrate, jwt, redis_client
 from app.api import api
 from app.models import *
 from lib import response
@@ -27,6 +27,7 @@ def register_extensions(app: Flask):
     jwt.init_app(app)
     ma.init_app(app)
     mail.init_app(app)
+    cors.init_app(app)
 
 
 def register_blueprints(app: Flask):
