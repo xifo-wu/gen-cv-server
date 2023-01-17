@@ -19,7 +19,7 @@ def index():
     # 只能获取到自己的简历
     current_user = get_current_user()
     resumes_select = db.select(Resume).where(
-        Resume.user_id == current_user['id']).order_by(Resume.updated_at)
+        Resume.user_id == current_user['id']).order_by(Resume.updated_at.desc())
 
     resumes_pagination = db.paginate(
         select=resumes_select, per_page=10
