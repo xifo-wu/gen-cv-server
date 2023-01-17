@@ -1,3 +1,4 @@
+import uuid
 from flask import abort
 from app.api.v1 import api_v1
 from app.models.resume import Resume
@@ -49,7 +50,7 @@ def create():
 
     resume = Resume(
         name=schema['name'],
-        slug=schema['slug'],
+        slug=schema.get('slug') or uuid.uuid4().hex,
         layout_type=schema['layout_type'],
         module_order=schema['module_order'],
         theme_color=schema['theme_color'],

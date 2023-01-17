@@ -8,7 +8,7 @@ class CreateAndResumeSchema(BaseSchema):
         unknown = EXCLUDE
 
     name = fields.Str()
-    slug = fields.Str(load_default=uuid.uuid4().hex)
+    slug = fields.Str()
     layout_type = fields.Str(load_default="style1")
     # TODO 添加默认值
     module_order = fields.Str(load_default="resume_basic")
