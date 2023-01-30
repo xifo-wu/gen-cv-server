@@ -3,6 +3,7 @@ from marshmallow import INCLUDE, EXCLUDE, fields
 from app.schemas import BaseSchema
 from app.schemas.resume_basic import ResumeBasicSchema
 
+
 class CreateAndResumeSchema(BaseSchema):
     class Meta:
         unknown = EXCLUDE
@@ -14,6 +15,8 @@ class CreateAndResumeSchema(BaseSchema):
     module_order = fields.Str(load_default="resume_basic")
     theme_color = fields.Str(load_default="#2065d1")
     custom_styles = fields.Dict(allow_none=True)
+
+    # TODO 添加 post_load
 
 
 class ResumeSchema(BaseSchema):

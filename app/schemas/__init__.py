@@ -2,9 +2,9 @@ from marshmallow import Schema, fields, post_dump, pre_load
 
 
 class BaseSchema(Schema):
-    SKIP_VALUES = set([None])
+    # SKIP_VALUES = set([None])
 
-    id = fields.Int(dump_only=True)
+    id = fields.Int()
     created_at = fields.DateTime(dump_only=True)
     updated_at = fields.DateTime(dump_only=True)
 
