@@ -1,7 +1,9 @@
+from dataclasses import dataclass
 from app.extensions import db
 from app.models import BaseModelMixin
 
 
+@dataclass
 class ResumeBasic(db.Model, BaseModelMixin):
     resume_id = db.Column(db.Integer, db.ForeignKey("resume.id"))
     resume = db.relationship("Resume", back_populates="resume_basic")
@@ -10,6 +12,7 @@ class ResumeBasic(db.Model, BaseModelMixin):
     email = db.relationship(
         "ResumeBasicField",
         backref=db.backref("email", uselist=False),
+        cascade="all, delete",
         foreign_keys=[email_id],
     )
 
@@ -17,6 +20,7 @@ class ResumeBasic(db.Model, BaseModelMixin):
     name = db.relationship(
         "ResumeBasicField",
         backref=db.backref("name", uselist=False),
+        cascade="all, delete",
         foreign_keys=[name_id],
     )
 
@@ -24,6 +28,7 @@ class ResumeBasic(db.Model, BaseModelMixin):
     age = db.relationship(
         "ResumeBasicField",
         backref=db.backref("age", uselist=False),
+        cascade="all, delete",
         foreign_keys=[age_id],
     )
 
@@ -31,6 +36,7 @@ class ResumeBasic(db.Model, BaseModelMixin):
     birthday = db.relationship(
         "ResumeBasicField",
         backref=db.backref("birthday", uselist=False),
+        cascade="all, delete",
         foreign_keys=[birthday_id],
     )
 
@@ -38,6 +44,7 @@ class ResumeBasic(db.Model, BaseModelMixin):
     avatar = db.relationship(
         "ResumeBasicField",
         backref=db.backref("avatar", uselist=False),
+        cascade="all, delete",
         foreign_keys=[avatar_id],
     )
 
@@ -45,6 +52,7 @@ class ResumeBasic(db.Model, BaseModelMixin):
     job = db.relationship(
         "ResumeBasicField",
         backref=db.backref("job", uselist=False),
+        cascade="all, delete",
         foreign_keys=[job_id],
     )
 
@@ -52,6 +60,7 @@ class ResumeBasic(db.Model, BaseModelMixin):
     job_year = db.relationship(
         "ResumeBasicField",
         backref=db.backref("job_year", uselist=False),
+        cascade="all, delete",
         foreign_keys=[job_year_id],
     )
 
@@ -59,6 +68,7 @@ class ResumeBasic(db.Model, BaseModelMixin):
     mobile = db.relationship(
         "ResumeBasicField",
         backref=db.backref("mobile_year", uselist=False),
+        cascade="all, delete",
         foreign_keys=[mobile_id],
     )
 
@@ -66,6 +76,7 @@ class ResumeBasic(db.Model, BaseModelMixin):
     website = db.relationship(
         "ResumeBasicField",
         backref=db.backref("website_year", uselist=False),
+        cascade="all, delete",
         foreign_keys=[website_id],
     )
 
@@ -76,6 +87,7 @@ class ResumeBasic(db.Model, BaseModelMixin):
     educational_qualifications = db.relationship(
         "ResumeBasicField",
         backref=db.backref("educational_qualifications_year", uselist=False),
+        cascade="all, delete",
         foreign_keys=[educational_qualifications_id],
     )
 
@@ -86,5 +98,6 @@ class ResumeBasic(db.Model, BaseModelMixin):
     in_a_word = db.relationship(
         "ResumeBasicField",
         backref=db.backref("in_a_word_year", uselist=False),
+        cascade="all, delete",
         foreign_keys=[in_a_word_id],
     )

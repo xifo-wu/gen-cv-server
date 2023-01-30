@@ -12,4 +12,10 @@ class Resume(db.Model, BaseModelMixin):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     user = db.relationship("User", backref="user")
 
-    resume_basic = db.relationship("ResumeBasic", back_populates="resume", uselist=False, lazy="joined")
+    resume_basic = db.relationship(
+        "ResumeBasic",
+        back_populates="resume",
+        cascade="all, delete-orphan",
+        uselist=False,
+        lazy="joined"
+    )
