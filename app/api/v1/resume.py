@@ -1,16 +1,29 @@
 import uuid
+from dataclasses import fields
 from flask import abort
 from app.api.v1 import api_v1
 from app.models.resume import Resume
 from app.models.resume_basic import ResumeBasic
 from app.models.resume_basic_field import ResumeBasicField
 from app.extensions import db
-from app.schemas.resume import CreateAndResumeSchema, ResumeSchema
+from app.schemas.resume import CreateAndResumeSchema, ResumeSchema, ResumeBasicSchema
 from lib import response
 from lib.request import load_schema
 from flask_jwt_extended import jwt_required, get_current_user
 
 resume_schema = ResumeSchema()
+resume_basic_schema = ResumeBasicSchema()
+
+
+def get_own_resume(resume_slug: str) -> Resume:
+    # 只能更新自己的简历
+    current_user = get_current_user()
+    resume = db.one_or_404(db.select(Resume).filter_by(slug=resume_slug))
+
+    if current_user['id'] != resume.user.id:
+        abort(404)
+
+    return resume
 
 
 @api_v1.get('/resumes')
@@ -63,16 +76,16 @@ def create():
             value=current_user['email'], label="邮箱", visible=True
         ),
         name=ResumeBasicField(
-            value=current_user['nickname'], label="姓名"
+            value=current_user['nickname'], label="姓名", visible=True
         ),
         mobile=ResumeBasicField(
-            value=current_user.get('mobile'), label="电话"
+            value=current_user.get('mobile'), label="电话", visible=True
         ),
         job=ResumeBasicField(
-            value="产品经理", label="岗位"
+            value="产品经理", label="岗位", visible=True
         ),
         job_year=ResumeBasicField(
-            value="3 年", label="工作经验"
+            value="3 年", label="工作经验", visible=True
         ),
     )
 
@@ -128,7 +141,18 @@ def show(resume_slug):
     if current_user['id'] != resume.user.id:
         abort(404)
 
-    print(resume, "resume")
-    print(resume.resume_basic, "resume.resume_basic")
     result = resume_schema.dump(resume)
+    return response.format(data=result)
+
+
+@api_v1.put('/resumes/<string:resume_slug>/resume-basic')
+@jwt_required()
+def update_resume_basic(resume_slug):
+    schema = load_schema(resume_basic_schema)
+    resume = get_own_resume(resume_slug)
+    resume.resume_basic = schema
+    db.session.commit()
+
+    result = resume_schema.dump(resume)
+
     return response.format(data=result)
