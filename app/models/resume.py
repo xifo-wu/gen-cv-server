@@ -1,5 +1,6 @@
 from app.extensions import db
 from app.models import BaseModelMixin
+from app.models.education import Education
 
 
 class Resume(db.Model, BaseModelMixin):
@@ -14,6 +15,14 @@ class Resume(db.Model, BaseModelMixin):
 
     resume_basic = db.relationship(
         "ResumeBasic",
+        back_populates="resume",
+        cascade="all, delete-orphan",
+        uselist=False,
+        lazy="joined"
+    )
+
+    education: Education = db.relationship(
+        "Education",
         back_populates="resume",
         cascade="all, delete-orphan",
         uselist=False,

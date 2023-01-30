@@ -1,11 +1,13 @@
 import uuid
-from dataclasses import fields
+import datetime
 from flask import abort
 from app.api.v1 import api_v1
+from app.models import Education, EducationDetail
 from app.models.resume import Resume
 from app.models.resume_basic import ResumeBasic
 from app.models.resume_basic_field import ResumeBasicField
 from app.extensions import db
+from app.schemas.education import EducationSchema, EducationDetailSchema
 from app.schemas.resume import CreateAndResumeSchema, ResumeSchema, ResumeBasicSchema
 from lib import response
 from lib.request import load_schema
@@ -60,6 +62,7 @@ def create():
     """
     current_user = get_current_user()
     schema = load_schema(CreateAndResumeSchema())
+    today = datetime.date.today()
 
     resume = Resume(
         name=schema['name'],
@@ -88,6 +91,23 @@ def create():
             value="3 年", label="工作经验", visible=True
         ),
     )
+
+    # 新建一份默认教育经历
+    resume.education = Education(
+        label="教育经历",
+        visible=True,
+        content_type="education2",
+        show_split=True,
+        split="split1",
+        education_details=[
+            EducationDetail(
+                name="嘿嘿大学",
+                start_on=f"{today.year}-09",
+                end_on=f"{today.year + 4}-06",
+                university_majors="软件工程",
+                desc="软件工程是一门研究用工程化方法构建和维护有效、实用和高质量的软件的学科。",
+            )
+        ])
 
     db.session.add(resume)
     db.session.commit()
@@ -151,6 +171,42 @@ def update_resume_basic(resume_slug):
     schema = load_schema(resume_basic_schema)
     resume = get_own_resume(resume_slug)
     resume.resume_basic = schema
+    db.session.commit()
+
+    result = resume_schema.dump(resume)
+
+    return response.format(data=result)
+
+
+@api_v1.put('/resumes/<string:resume_slug>/education')
+@jwt_required()
+def update_education(resume_slug):
+    schema = load_schema(EducationSchema())
+    resume = get_own_resume(resume_slug)
+    resume.education = schema
+    db.session.commit()
+
+    result = resume_schema.dump(resume)
+
+    return response.format(data=result)
+
+
+@api_v1.put('/resumes/<string:resume_slug>/education-details/<string:education_detail_id>')
+@jwt_required()
+def update_education_detail(resume_slug, education_detail_id):
+    schema = load_schema(EducationDetailSchema())
+    resume = get_own_resume(resume_slug)
+
+    education_detail = db.one_or_404(
+        db.select(EducationDetail).filter_by(id=education_detail_id))
+
+    if resume.education.id != education_detail.id:
+        abort(403)
+
+    db.session.execute(
+        db.update(EducationDetail).where(EducationDetail.id == education_detail.id).values(
+            EducationDetailSchema(exclude=("id", "updated_at", "created_at")).dump(schema))
+    )
     db.session.commit()
 
     result = resume_schema.dump(resume)

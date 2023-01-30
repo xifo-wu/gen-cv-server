@@ -2,6 +2,7 @@ import uuid
 from marshmallow import INCLUDE, EXCLUDE, fields
 from app.schemas import BaseSchema
 from app.schemas.resume_basic import ResumeBasicSchema
+from app.schemas.education import EducationSchema
 
 
 class CreateAndResumeSchema(BaseSchema):
@@ -12,7 +13,7 @@ class CreateAndResumeSchema(BaseSchema):
     slug = fields.Str()
     layout_type = fields.Str(load_default="style1")
     # TODO 添加默认值
-    module_order = fields.Str(load_default="resume_basic")
+    module_order = fields.Str(load_default="resume_basic,education")
     theme_color = fields.Str(load_default="#2065d1")
     custom_styles = fields.Dict(allow_none=True)
 
@@ -31,3 +32,4 @@ class ResumeSchema(BaseSchema):
     custom_styles = fields.Dict(allow_none=True)
     user = fields.Nested("UserSchema", only=("id", "username"))
     resume_basic = fields.Nested("ResumeBasicSchema")
+    education = fields.Nested("EducationSchema")
