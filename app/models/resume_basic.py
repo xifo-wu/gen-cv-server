@@ -1,9 +1,7 @@
-from dataclasses import dataclass
 from app.extensions import db
 from app.models import BaseModelMixin
 
 
-@dataclass
 class ResumeBasic(db.Model, BaseModelMixin):
     resume_id = db.Column(db.Integer, db.ForeignKey("resume.id"))
     resume = db.relationship("Resume", back_populates="resume_basic")
