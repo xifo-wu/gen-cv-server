@@ -1,5 +1,10 @@
 from flask import request, jsonify
 
+def forbidden(e):
+    if request.path.startswith('/api/'):
+        return error(message="抱歉，暂无权限", status_code=403)
+    else:
+        return e, 403
 
 def page_not_found(e):
     if request.path.startswith('/api/'):

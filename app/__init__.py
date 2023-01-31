@@ -34,6 +34,7 @@ def register_blueprints(app: Flask):
     app.register_blueprint(api, url_prefix='/api')
 
     # 注册 API 请求错误
+    app.register_error_handler(403, response.forbidden)
     app.register_error_handler(404, response.page_not_found)
     app.register_error_handler(405, response.method_not_allowed)
     app.register_error_handler(APIRequestError, response.api_request_error)
