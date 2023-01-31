@@ -212,3 +212,19 @@ def update_education_detail(resume_slug, education_detail_id):
     result = resume_schema.dump(resume)
 
     return response.format(data=result)
+
+
+@api_v1.post('/resumes/<string:resume_slug>/education-details')
+@jwt_required()
+def create_education_detail(resume_slug):
+    schema = load_schema(EducationDetailSchema())
+    resume = get_own_resume(resume_slug)
+
+    resume.education.education_details.append(schema)
+
+    # db.session.add(schema)
+    db.session.commit()
+
+    result = resume_schema.dump(resume)
+
+    return response.format(data=result)
